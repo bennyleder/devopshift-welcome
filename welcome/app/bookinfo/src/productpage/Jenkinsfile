@@ -14,7 +14,7 @@ stages {
     stage('Build'){
         steps {
             script {
-              sh 'docker build --target build --tag ${IMAGE_NAME}:${VERSION}-build -f /home/ubuntu/workarea/repo/welcome/app/bookinfo/src/productpage/Dockerfile'
+              sh 'docker build --target build --tag ${IMAGE_NAME}:${VERSION}-build -f welcome/app/bookinfo/src/productpage/Dockerfile welcome/app/bookinfo/src/productpage'
             }
         }
     }
