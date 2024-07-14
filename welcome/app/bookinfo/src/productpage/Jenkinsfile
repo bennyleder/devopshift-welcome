@@ -14,7 +14,7 @@ stages {
     stage('Build'){
         steps {
             script {
-              sh 'docker build --target build --tag ${IMAGE_NAME}:${VERSION} -build .'
+              sh 'docker build --target build --tag ${IMAGE_NAME}:${VERSION}-build .'
             }
         }
     }
