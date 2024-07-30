@@ -22,7 +22,7 @@ stages {
             steps{
                 script{
                     sh'docker build --target lint/test  --tag ${IMAGE_NAME}:${VERSION}-linttest -f welcome/app/bookinfo/src/ratings/Dockerfile welcome/app/bookinfo/src/ratings'
-                    sh'docker run --rm${IMAGE_NAME}:${VERSION}-linttest'}
+                    sh'docker run --rm ${IMAGE_NAME}:${VERSION}-linttest'}
                 }
     }
     stage('Push'){

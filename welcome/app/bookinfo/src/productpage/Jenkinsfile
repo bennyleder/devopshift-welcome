@@ -22,7 +22,7 @@ stages {
             steps{
                 script{
                     sh'docker build  --tag ${IMAGE_NAME}:${VERSION}-test -f welcome/app/bookinfo/src/productpage/Dockerfile welcome/app/bookinfo/src/productpage'
-                    sh'docker run --rm${IMAGE_NAME}:${VERSION}-test'}
+                    sh'docker run --rm ${IMAGE_NAME}:${VERSION}-test'}
                 }
     }
     stage('Push'){
