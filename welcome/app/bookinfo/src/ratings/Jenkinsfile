@@ -4,35 +4,53 @@ pipeline{
         // Timeout counter starts AFTER agent is allocated
         timeout(time: 1, unit: 'SECONDS')
     }
-environment{
-    IMAGE_NAME='ratings'
-    VERSION="v${env.BUILD_NUMBER}"
-    REPO='bennylederh'
-    CREDENTIALS_ID='myDHCred'
-}
-stages {
-    stage('Build'){
-        steps {
-            script {
-              sh 'docker build --target build --tag  ${IMAGE_NAME}:${VERSION}-build -f welcome/app/bookinfo/src/ratings/Dockerfile welcome/app/bookinfo/src/ratings'
+    environment{
+        IMAGE_NAME='ratings'
+        VERSION="v${env.BUILD_NUMBER}"
+        REPO='bennylederh'
+        CREDENTIALS_ID='myDHCred'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+               git 'https://github.com/bennyleder/devopshift-welcome.git'
+                }
+        }   
+
+        stage('Build'){
+            steps {
+                script {
+                sh 'docker build --target build --tag  ${IMAGE_NAME}:${VERSION}-build -f welcome/app/bookinfo/src/ratings/Dockerfile welcome/app/bookinfo/src/ratings'
+                }
             }
         }
-    }
-    stage('lint/Test'){
+        stage('Lint/Test'){
             steps{
                 script{
-                    sh'docker build --target lint/test  --tag ${IMAGE_NAME}:${VERSION}-linttest -f welcome/app/bookinfo/src/ratings/Dockerfile welcome/app/bookinfo/src/ratings'
-                    sh'docker run --rm ${IMAGE_NAME}:${VERSION}-linttest'}
+                    sh'docker build --target lint-test  --tag ${IMAGE_NAME}:${VERSION}-lint-test -f welcome/app/bookinfo/src/ratings/Dockerfile welcome/app/bookinfo/src/ratings'
+                    sh'docker run --rm ${IMAGE_NAME}:${VERSION}-lint-test'
                 }
-    }
-    stage('Push'){
-        steps{
-            script{
-                docker.withRegistry('https://index.docker.io/v1/',"${CREDENTIALS_ID}"){
-                    sh'dockerpush${REPO}/${IMAGE_NAME}:${VERSION}'
+            }
+        }
+        stage('Run'){
+            steps{
+                script{
+                    sh'docker build  --tag ${IMAGE_NAME}:${VERSION} -f welcome/app/bookinfo/src/ratings/Dockerfile welcome/app/bookinfo/src/ratings'
+                }
+            }   
+        }
+        stage('Push'){
+            steps{
+                script{
+                    docker.withRegistry('https://index.docker.io/v1/',"${CREDENTIALS_ID}") {
+                        sh'''
+                        docker push${REPO}/${IMAGE_NAME}:${VERSION}
+                        docker tag ${REPO}/${IMAGE_NAME}:${VERSION} ${REPO}/${IMAGE_NAME}:latest
+                        docker push ${REPO}/${IMAGE_NAME}:latest
+                        '''
+                    }
                 }
             }
         }
     }
-}
 }
