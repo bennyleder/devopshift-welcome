@@ -17,7 +17,7 @@ spec:
       prune: false
       selfHeal: true
     hooks:
-        - type: SyncFail
+        - type: PreSync
           command: ["/bin/sh", "-c"]
           args: ["echo SyncFail hook executed"]
   # webhook:
