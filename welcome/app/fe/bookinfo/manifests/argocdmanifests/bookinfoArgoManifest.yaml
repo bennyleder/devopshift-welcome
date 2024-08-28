@@ -14,9 +14,12 @@ spec:
     namespace: default
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
-
+    hooks:
+        - type: SyncFail
+          command: ["/bin/sh", "-c"]
+          args: ["echo SyncFail hook executed"]
   # webhook:
   #   github:
   #     secret: webhook-secret
